@@ -5,22 +5,33 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
+// Log startup for debugging.
+error_log("Starting PHP server...");
+
 // Set CORS headers so that the frontend can access this API.
-header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Origin: *'); // Replace with Vercel URL later
 header('Access-Control-Allow-Headers: Content-Type');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
 
 // Handle pre-flight OPTIONS request.
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
     exit;
 }
 
-// Include the Database connection class. (Correct relative path)
+// Include the Database connection class.
 require_once __DIR__ . '/config/Database.php';
 
 // Connect to the database.
 $db = new Database();
 $conn = $db->connect();
+if (!$conn) {
+    error_log("Database connection failed");
+    http_response_code(500);
+    echo json_encode(['error' => 'Database connection failed']);
+    exit;
+}
+error_log("Database connected successfully");
 
 // Read the incoming POST request body.
 $rawInput = file_get_contents('php://input');
@@ -76,7 +87,6 @@ function enrichProduct($conn, $product) {
     $attributeSets = $attrStmt->fetchAll(PDO::FETCH_ASSOC);
     $attributes = [];
     foreach ($attributeSets as $aset) {
-         // For each attribute set, get its items.
          $itemStmt = $conn->prepare("SELECT id, display_value, value FROM attribute_items WHERE set_id = :set_id");
          $itemStmt->execute([':set_id' => $aset['set_id']]);
          $items = $itemStmt->fetchAll(PDO::FETCH_ASSOC);
@@ -100,18 +110,13 @@ function enrichProduct($conn, $product) {
 }
 
 // --- Handle GraphQL Queries ---
-
-// 1. Categories Query: Return all category names.
 if (strpos($query, 'categories') !== false) {
     $stmt = $conn->prepare("SELECT name FROM categories");
     $stmt->execute();
     $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
     $response['data']['categories'] = $categories;
-}
-// 2. Products Query (optionally filtering by category).
-elseif (preg_match('/products\(categoryName:\s*"?([^"]*)"?\)/', $query, $matches)) {
+} elseif (preg_match('/products\(categoryName:\s*"?([^"]*)"?\)/', $query, $matches)) {
     $categoryName = $matches[1] ?? 'all';
-    // If the captured value is "$categoryName", replace it with the variable value.
     if ($categoryName === '$categoryName' && isset($variables['categoryName'])) {
         $categoryName = $variables['categoryName'];
     }
@@ -125,22 +130,16 @@ elseif (preg_match('/products\(categoryName:\s*"?([^"]*)"?\)/', $query, $matches
     }
     $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
-    // Enrich each product with gallery, prices, and attributes.
     $enriched = [];
     foreach ($products as $prod) {
          $enriched[] = enrichProduct($conn, $prod);
     }
     $response['data']['products'] = $enriched;
-}
-// 3. Single Product Query.
-elseif (strpos($query, 'product(id:') !== false) {
+} elseif (strpos($query, 'product(id:') !== false) {
     $productId = null;
-    // Attempt to extract a quoted id.
     if (preg_match('/product\(id:\s*"([^"]+)"/', $query, $matches)) {
         $productId = $matches[1];
-    }
-    // If not quoted, check for a variable-based query.
-    elseif (strpos($query, 'product(id: $id') !== false && isset($variables['id'])) {
+    } elseif (strpos($query, 'product(id: $id') !== false && isset($variables['id'])) {
         $productId = $variables['id'];
     }
     if ($productId) {
@@ -154,9 +153,7 @@ elseif (strpos($query, 'product(id:') !== false) {
     } else {
         $response['data']['product'] = null;
     }
-}
-// 4. Place Order Mutation.
-elseif (strpos($query, 'placeOrder') !== false) {
+} elseif (strpos($query, 'placeOrder') !== false) {
     $response['data']['placeOrder'] = [
         'id' => 'order_' . uniqid(),
         'total' => rand(100, 1000) / 100
@@ -165,3 +162,10 @@ elseif (strpos($query, 'placeOrder') !== false) {
 
 header('Content-Type: application/json');
 echo json_encode($response);
+
+// If this script is run directly (e.g., not via a server), start PHP's built-in server.
+if (php_sapi_name() === 'cli' && isset($argv[0]) && realpath($argv[0]) === __FILE__) {
+    $port = getenv('PORT') ?: '8080';
+    error_log("Running PHP server on port $port");
+    exec("php -S 0.0.0.0:$port -t " . __DIR__);
+}
