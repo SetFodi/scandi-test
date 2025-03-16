@@ -2,11 +2,12 @@
 // backend/index.php
 
 // Enable error reporting for debugging.
-error_reporting(E_ALL);
+error_reportin
+g(E_ALL);
 ini_set('display_errors', 1);
 
 // Log startup for debugging.
-error_log("Starting PHP server...");
+error_log("PHP application starting on port " . (getenv('PORT') ?: '8080'));
 
 // Set CORS headers so that the frontend can access this API.
 header('Access-Control-Allow-Origin: *'); // Replace with Vercel URL later
@@ -42,7 +43,6 @@ $variables = $input['variables'] ?? [];
 // Prepare the response structure.
 $response = ['data' => []];
 
-// enrichProduct function (unchanged)
 function enrichProduct($conn, $product) {
     $product['inStock'] = (bool)$product['in_stock'];
     unset($product['in_stock']);
@@ -99,7 +99,6 @@ function enrichProduct($conn, $product) {
     return $product;
 }
 
-// GraphQL Queries (unchanged)
 if (strpos($query, 'categories') !== false) {
     $stmt = $conn->prepare("SELECT name FROM categories");
     $stmt->execute();
@@ -152,10 +151,3 @@ if (strpos($query, 'categories') !== false) {
 
 header('Content-Type: application/json');
 echo json_encode($response);
-
-// If run directly (e.g., via Railway), start the server.
-if (php_sapi_name() === 'cli' && isset($argv[0]) && realpath($argv[0]) === __FILE__) {
-    $port = getenv('PORT') ?: '8080';
-    error_log("Running PHP server on port $port");
-    exec("php -S 0.0.0.0:$port -t " . __DIR__);
-}
