@@ -1,5 +1,5 @@
 <?php
-// backend/public/index.php
+// backend/index.php
 
 // Enable error reporting for debugging.
 error_reporting(E_ALL);
@@ -42,25 +42,16 @@ $variables = $input['variables'] ?? [];
 // Prepare the response structure.
 $response = ['data' => []];
 
-/**
- * Enrich a product row with additional data:
- *  - Convert in_stock to inStock (boolean).
- *  - Append a gallery field (array of image URLs).
- *  - Append a prices field (array of objects with amount and currency).
- *  - Append an attributes field (array of attribute sets with items).
- */
+// enrichProduct function (unchanged)
 function enrichProduct($conn, $product) {
-    // Convert in_stock to inStock (boolean) and remove the original key.
     $product['inStock'] = (bool)$product['in_stock'];
     unset($product['in_stock']);
     
-    // Get gallery images for the product.
     $galStmt = $conn->prepare("SELECT image_url FROM product_gallery WHERE product_id = :id ORDER BY id ASC");
     $galStmt->execute([':id' => $product['id']]);
     $gallery = $galStmt->fetchAll(PDO::FETCH_COLUMN);
     $product['gallery'] = $gallery;
     
-    // Get prices for the product.
     $priceStmt = $conn->prepare("SELECT amount, currency_label, currency_symbol FROM prices WHERE product_id = :id ORDER BY id ASC");
     $priceStmt->execute([':id' => $product['id']]);
     $pricesRaw = $priceStmt->fetchAll(PDO::FETCH_ASSOC);
@@ -76,7 +67,6 @@ function enrichProduct($conn, $product) {
     }
     $product['prices'] = $prices;
     
-    // Get attributes for the product.
     $attrStmt = $conn->prepare(
         "SELECT asets.id AS set_id, asets.name, asets.type 
          FROM attribute_sets asets
@@ -109,7 +99,7 @@ function enrichProduct($conn, $product) {
     return $product;
 }
 
-// --- Handle GraphQL Queries ---
+// GraphQL Queries (unchanged)
 if (strpos($query, 'categories') !== false) {
     $stmt = $conn->prepare("SELECT name FROM categories");
     $stmt->execute();
@@ -163,7 +153,7 @@ if (strpos($query, 'categories') !== false) {
 header('Content-Type: application/json');
 echo json_encode($response);
 
-// If this script is run directly (e.g., not via a server), start PHP's built-in server.
+// If run directly (e.g., via Railway), start the server.
 if (php_sapi_name() === 'cli' && isset($argv[0]) && realpath($argv[0]) === __FILE__) {
     $port = getenv('PORT') ?: '8080';
     error_log("Running PHP server on port $port");
