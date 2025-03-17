@@ -13,7 +13,6 @@ const ProductContainer = styled.div`
   gap: 8rem;
   max-width: 1400px;
   margin: 0 auto;
-  
   @media (max-width: 1024px) {
     flex-direction: column;
     padding: 2rem;
@@ -25,7 +24,6 @@ const GalleryContainer = styled.div`
   display: flex;
   gap: 2rem;
   flex: 1;
-  
   @media (max-width: 768px) {
     flex-direction: column-reverse;
   }
@@ -35,7 +33,6 @@ const ThumbnailContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  
   @media (max-width: 768px) {
     flex-direction: row;
     overflow-x: auto;
@@ -48,13 +45,12 @@ const Thumbnail = styled.img`
   height: 80px;
   object-fit: cover;
   cursor: pointer;
-  border: ${props => props.selected ? '2px solid #5ECE7B' : '1px solid #E5E5E5'};
+  border: ${props => (props.selected ? '2px solid #5ECE7B' : '1px solid #E5E5E5')};
   border-radius: 2px;
   transition: all 0.2s ease;
-  
   &:hover {
-    transform: ${props => props.selected ? 'none' : 'scale(1.05)'};
-    box-shadow: ${props => props.selected ? 'none' : '0 2px 8px rgba(0, 0, 0, 0.1)'};
+    transform: ${props => (props.selected ? 'none' : 'scale(1.05)')};
+    box-shadow: ${props => (props.selected ? 'none' : '0 2px 8px rgba(0, 0, 0, 0.1)')};
   }
 `;
 
@@ -63,7 +59,7 @@ const MainImageContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #FAFAFA;
+  background-color: #fafafa;
   border-radius: 4px;
   padding: 2rem;
 `;
@@ -83,14 +79,14 @@ const Brand = styled.h2`
   font-weight: 600;
   font-size: 2rem;
   margin-bottom: 0.5rem;
-  color: #1D1F22;
+  color: #1d1f22;
 `;
 
 const ProductName = styled.h3`
   font-weight: 400;
   font-size: 1.75rem;
   margin-bottom: 2.5rem;
-  color: #1D1F22;
+  color: #1d1f22;
 `;
 
 const AttributeContainer = styled.div`
@@ -120,16 +116,15 @@ const AttributeOption = styled.button`
   align-items: center;
   justify-content: center;
   font-family: 'Source Sans Pro', sans-serif;
-  border: 1px solid #1D1F22;
-  background: ${props => props.selected ? '#1D1F22' : 'white'};
-  color: ${props => props.selected ? 'white' : '#1D1F22'};
+  border: 1px solid #1d1f22;
+  background: ${props => (props.selected ? '#1d1f22' : 'white')};
+  color: ${props => (props.selected ? 'white' : '#1d1f22')};
   cursor: pointer;
   transition: all 0.2s ease;
-  
   &:hover {
-    background: ${props => props.selected ? '#1D1F22' : '#f9f9f9'};
-    transform: ${props => props.selected ? 'none' : 'translateY(-2px)'};
-    box-shadow: ${props => props.selected ? 'none' : '0 2px 8px rgba(0, 0, 0, 0.1)'};
+    background: ${props => (props.selected ? '#1d1f22' : '#f9f9f9')};
+    transform: ${props => (props.selected ? 'none' : 'translateY(-2px)')};
+    box-shadow: ${props => (props.selected ? 'none' : '0 2px 8px rgba(0, 0, 0, 0.1)')};
   }
 `;
 
@@ -137,20 +132,19 @@ const ColorOption = styled.button`
   width: 36px;
   height: 36px;
   background-color: ${props => props.color};
-  border: ${props => props.selected ? '2px solid #5ECE7B' : '1px solid #E5E5E5'};
+  border: ${props => (props.selected ? '2px solid #5ECE7B' : '1px solid #E5E5E5')};
   border-radius: 50%;
   cursor: pointer;
   transition: all 0.2s ease;
-  
   &:hover {
-    transform: ${props => props.selected ? 'none' : 'scale(1.1)'};
-    box-shadow: ${props => props.selected ? 'none' : '0 2px 8px rgba(0, 0, 0, 0.1)'};
+    transform: ${props => (props.selected ? 'none' : 'scale(1.1)')};
+    box-shadow: ${props => (props.selected ? 'none' : '0 2px 8px rgba(0, 0, 0, 0.1)')};
   }
 `;
 
 const PriceContainer = styled.div`
   margin-bottom: 2rem;
-  border-top: 1px solid #E5E5E5;
+  border-top: 1px solid #e5e5e5;
   padding-top: 1.5rem;
 `;
 
@@ -166,13 +160,13 @@ const PriceLabel = styled.h4`
 const Price = styled.p`
   font-weight: 700;
   font-size: 1.5rem;
-  color: #1D1F22;
+  color: #1d1f22;
 `;
 
 const AddToCartButton = styled.button`
   width: 100%;
   padding: 1.25rem;
-  background-color: ${props => props.disabled ? '#E5E5E5' : '#5ECE7B'};
+  background-color: ${props => (props.disabled ? '#e5e5e5' : '#5ece7b')};
   color: white;
   border: none;
   border-radius: 4px;
@@ -180,26 +174,24 @@ const AddToCartButton = styled.button`
   font-size: 1rem;
   text-transform: uppercase;
   margin-bottom: 2.5rem;
-  cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
+  cursor: ${props => (props.disabled ? 'not-allowed' : 'pointer')};
   transition: all 0.2s ease;
   letter-spacing: 0.05em;
-  box-shadow: ${props => props.disabled ? 'none' : '0 4px 10px rgba(94, 206, 123, 0.3)'};
-  
+  box-shadow: ${props => (props.disabled ? 'none' : '0 4px 10px rgba(94, 206, 123, 0.3)')};
   &:hover {
-    background-color: ${props => props.disabled ? '#E5E5E5' : '#4CAF50'};
-    transform: ${props => props.disabled ? 'none' : 'translateY(-2px)'};
-    box-shadow: ${props => props.disabled ? 'none' : '0 6px 14px rgba(94, 206, 123, 0.4)'};
+    background-color: ${props => (props.disabled ? '#e5e5e5' : '#4caf50')};
+    transform: ${props => (props.disabled ? 'none' : 'translateY(-2px)')};
+    box-shadow: ${props => (props.disabled ? 'none' : '0 6px 14px rgba(94, 206, 123, 0.4)')};
   }
 `;
 
 const OutOfStockButton = styled(AddToCartButton)`
-  background-color: #E5E5E5;
+  background-color: #e5e5e5;
   color: #757575;
   font-weight: 500;
   box-shadow: none;
-  
   &:hover {
-    background-color: #E5E5E5;
+    background-color: #e5e5e5;
     transform: none;
     box-shadow: none;
   }
@@ -211,24 +203,21 @@ const DescriptionContainer = styled.div`
   line-height: 1.8;
   color: #454545;
   padding-top: 1.5rem;
-  border-top: 1px solid #E5E5E5;
-  
+  border-top: 1px solid #e5e5e5;
   h3 {
     font-size: 1.25rem;
     font-weight: 600;
     margin: 1.5rem 0 0.75rem;
-    color: #1D1F22;
+    color: #1d1f22;
   }
-  
   p {
     margin-bottom: 1.25rem;
   }
-  
-  ul, ol {
+  ul,
+  ol {
     margin-left: 1.5rem;
     margin-bottom: 1.25rem;
   }
-  
   li {
     margin-bottom: 0.5rem;
   }
@@ -239,56 +228,56 @@ function ProductPage() {
   const { addToCart } = useContext(CartContext);
   const [selectedImage, setSelectedImage] = useState(0);
   const [selectedAttributes, setSelectedAttributes] = useState({});
-  
+
   const { loading, error, data } = useQuery(GET_PRODUCT, {
-    variables: { id: productId }
+    variables: { id: productId },
   });
-  
-  if (loading) return (
-    <div style={{ display: 'flex', justifyContent: 'center', padding: '5rem' }}>
-      <p>Loading product details...</p>
-    </div>
-  );
-  
-  if (error) return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '3rem' }}>
-      <p style={{ color: '#D32F2F', marginBottom: '1rem' }}>Error loading product: {error.message}</p>
-      <button 
-        onClick={() => window.location.reload()}
-        style={{ padding: '0.75rem 1.5rem', background: '#1D1F22', color: 'white', border: 'none', cursor: 'pointer' }}
-      >
-        Try Again
-      </button>
-    </div>
-  );
-  
+
+  if (loading)
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', padding: '5rem' }}>
+        <p>Loading product details...</p>
+      </div>
+    );
+
+  if (error)
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '3rem' }}>
+        <p style={{ color: '#D32F2F', marginBottom: '1rem' }}>Error loading product: {error.message}</p>
+        <button
+          onClick={() => window.location.reload()}
+          style={{ padding: '0.75rem 1.5rem', background: '#1D1F22', color: 'white', border: 'none', cursor: 'pointer' }}
+        >
+          Try Again
+        </button>
+      </div>
+    );
+
   const product = data?.product;
-  if (!product) return (
-    <div style={{ display: 'flex', justifyContent: 'center', padding: '5rem' }}>
-      <p>Product not found</p>
-    </div>
-  );
-  
+  if (!product)
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', padding: '5rem' }}>
+        <p>Product not found</p>
+      </div>
+    );
+
   const handleAttributeSelect = (attributeId, value) => {
     setSelectedAttributes(prev => ({
       ...prev,
-      [attributeId]: value
+      [attributeId]: value,
     }));
   };
-  
+
   const handleAddToCart = () => {
-    // Convert selected attributes to the format expected by the cart
     const attributesArray = Object.entries(selectedAttributes).map(([id, value]) => ({
       id,
-      value
+      value,
     }));
-    
     addToCart(product, attributesArray);
   };
-  
-  // Check if all required attributes are selected
+
   const allAttributesSelected = product.attributes.length === Object.keys(selectedAttributes).length;
-  
+
   return (
     <ProductContainer>
       <GalleryContainer data-testid="product-gallery">
@@ -307,21 +296,20 @@ function ProductPage() {
           <MainImage src={product.gallery[selectedImage]} alt={product.name} />
         </MainImageContainer>
       </GalleryContainer>
-      
+
       <InfoContainer>
         <Brand>{product.brand}</Brand>
         <ProductName>{product.name}</ProductName>
-        
+
         {product.attributes.map(attribute => (
-          <AttributeContainer 
+          <AttributeContainer
             key={attribute.id}
-            data-testid={`product-attribute-${attribute.id.toLowerCase().replace(/\s+/g, '-')}`}
+            data-testid={`product-attribute-${attribute.name.toLowerCase().replace(/\s+/g, '-')}`}
           >
             <AttributeName>{attribute.name}:</AttributeName>
             <AttributeOptions>
               {attribute.items.map(item => {
                 const isSelected = selectedAttributes[attribute.id] === item.value;
-                
                 if (attribute.type === 'swatch') {
                   return (
                     <ColorOption
@@ -329,15 +317,16 @@ function ProductPage() {
                       color={item.value}
                       selected={isSelected}
                       onClick={() => handleAttributeSelect(attribute.id, item.value)}
+                      data-testid={`product-attribute-${attribute.name.toLowerCase().replace(/\s+/g, '-')}-${item.value.toLowerCase().replace(/\s+/g, '-')}`}
                     />
                   );
                 }
-                
                 return (
                   <AttributeOption
                     key={item.id}
                     selected={isSelected}
                     onClick={() => handleAttributeSelect(attribute.id, item.value)}
+                    data-testid={`product-attribute-${attribute.name.toLowerCase().replace(/\s+/g, '-')}-${item.value.toLowerCase().replace(/\s+/g, '-')}`}
                   >
                     {item.displayValue}
                   </AttributeOption>
@@ -346,12 +335,12 @@ function ProductPage() {
             </AttributeOptions>
           </AttributeContainer>
         ))}
-        
+
         <PriceContainer>
           <PriceLabel>Price:</PriceLabel>
           <Price>{product.prices[0].currency.symbol}{product.prices[0].amount.toFixed(2)}</Price>
         </PriceContainer>
-        
+
         {product.inStock ? (
           <AddToCartButton
             onClick={handleAddToCart}
@@ -365,10 +354,8 @@ function ProductPage() {
             Out of stock
           </OutOfStockButton>
         )}
-        
-        <DescriptionContainer data-testid="product-description">
-          {parse(product.description)}
-        </DescriptionContainer>
+
+        <DescriptionContainer data-testid="product-description">{parse(product.description)}</DescriptionContainer>
       </InfoContainer>
     </ProductContainer>
   );

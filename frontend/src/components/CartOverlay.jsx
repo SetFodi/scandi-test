@@ -1,3 +1,4 @@
+// frontend/src/components/CartOverlay.jsx
 import React, { useContext } from 'react';
 import { useMutation } from '@apollo/client';
 import styled from 'styled-components';
@@ -141,7 +142,6 @@ function CartOverlay({ onClose }) {
         quantity: item.quantity,
         selectedAttributes: item.selectedAttributes,
       }));
-
       await placeOrder({ variables: { products: orderProducts } });
       alert('Order placed successfully!');
       clearCart();
