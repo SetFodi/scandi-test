@@ -312,24 +312,28 @@ function ProductPage() {
                 const isSelected = selectedAttributes[attribute.id] === item.value;
                 if (attribute.type === 'swatch') {
                   return (
-                    <ColorOption
-                      key={item.id}
-                      color={item.value}
-                      selected={isSelected}
-                      onClick={() => handleAttributeSelect(attribute.id, item.value)}
-                      data-testid={`product-attribute-${attribute.name.toLowerCase().replace(/\s+/g, '-')}-${item.value.toLowerCase().replace(/\s+/g, '-')}`}
-                    />
+                  <ColorOption
+                    key={item.id}
+                    color={item.value}
+                    selected={isSelected}
+                    onClick={() => handleAttributeSelect(attribute.id, item.value)}
+                    data-testid={`product-attribute-${attribute.name.toLowerCase().replace(/\s+/g, '-')}-${
+                      item.value.startsWith('#') ? item.value.toUpperCase() : item.displayValue
+                    }`}
+                  />
+
                   );
                 }
                 return (
-                  <AttributeOption
-                    key={item.id}
-                    selected={isSelected}
-                    onClick={() => handleAttributeSelect(attribute.id, item.value)}
-                    data-testid={`product-attribute-${attribute.name.toLowerCase().replace(/\s+/g, '-')}-${item.value.toLowerCase().replace(/\s+/g, '-')}`}
-                  >
-                    {item.displayValue}
-                  </AttributeOption>
+                <AttributeOption
+                  key={item.id}
+                  selected={isSelected}
+                  onClick={() => handleAttributeSelect(attribute.id, item.value)}
+                  data-testid={`product-attribute-${attribute.name.toLowerCase().replace(/\s+/g, '-')}-${item.value}`}
+                >
+                  {item.displayValue}
+                </AttributeOption>
+
                 );
               })}
             </AttributeOptions>
