@@ -2,12 +2,11 @@
 // backend/index.php
 
 // Enable error reporting for debugging.
-error_reportin
-g(E_ALL);
+error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 // Log startup for debugging.
-error_log("PHP application starting on port " . (getenv('PORT') ?: '8080'));
+error_log("PHP application running on port 9000");
 
 // Set CORS headers so that the frontend can access this API.
 header('Access-Control-Allow-Origin: *'); // Replace with Vercel URL later
@@ -136,7 +135,7 @@ if (strpos($query, 'categories') !== false) {
         $stmt->execute([':id' => $productId]);
         $product = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($product) {
-             $product = enrichProduct($conn, $product);
+             $product = enrichProduct($conn, $prod);
         }
         $response['data']['product'] = $product;
     } else {
