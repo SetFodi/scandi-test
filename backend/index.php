@@ -38,10 +38,19 @@ function enrichProduct($conn, $product) {
     $product['inStock'] = (bool)$product['in_stock'];
     unset($product['in_stock']);
     
-    $galStmt = $conn->prepare("SELECT image_url FROM product_gallery WHERE product_id = :id ORDER BY id ASC");
-    $galStmt->execute([':id' => $product['id']]);
-    $gallery = $galStmt->fetchAll(PDO::FETCH_COLUMN);
-    $product['gallery'] = $gallery;
+    // Fix for gallery - parse from the JSON string in the products table
+    if (!empty($product['gallery'])) {
+        // Parse the JSON string to get the gallery array
+        $product['gallery'] = json_decode($product['gallery'], true);
+        
+        // If parsing failed, provide a fallback empty array
+        if ($product['gallery'] === null) {
+            error_log("Failed to parse gallery JSON for product ID: " . $product['id']);
+            $product['gallery'] = [];
+        }
+    } else {
+        $product['gallery'] = [];
+    }
     
     $priceStmt = $conn->prepare("SELECT amount, currency_label, currency_symbol FROM prices WHERE product_id = :id ORDER BY id ASC");
     $priceStmt->execute([':id' => $product['id']]);
@@ -128,7 +137,7 @@ if (strpos($query, 'categories') !== false) {
         $stmt->execute([':id' => $productId]);
         $product = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($product) {
-            $response['data']['product'] = enrichProduct($conn, $product); // Fixed $prod to $product
+            $response['data']['product'] = enrichProduct($conn, $product);
         } else {
             error_log("Product not found for ID: $productId");
             $response['data']['product'] = null;
@@ -146,3 +155,4 @@ if (strpos($query, 'categories') !== false) {
 
 header('Content-Type: application/json');
 echo json_encode($response);
+
