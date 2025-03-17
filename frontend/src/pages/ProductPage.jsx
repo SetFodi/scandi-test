@@ -1,3 +1,4 @@
+// frontend/src/pages/ProductPage.jsx
 import React, { useState, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/client';

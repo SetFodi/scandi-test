@@ -1,28 +1,22 @@
 <?php
 // backend/index.php
 
-// Enable error reporting for debugging.
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// Log startup for debugging.
 error_log("PHP application running on port 9000");
 
-// Set CORS headers so that the frontend can access this API.
-header('Access-Control-Allow-Origin: https://scandi-test-sepia.vercel.app'); // Replace with Vercel URL later
+header('Access-Control-Allow-Origin: https://scandi-test-sepia.vercel.app');
 header('Access-Control-Allow-Headers: Content-Type');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
 
-// Handle pre-flight OPTIONS request.
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit;
 }
 
-// Include the Database connection class.
 require_once __DIR__ . '/config/Database.php';
 
-// Connect to the database.
 $db = new Database();
 $conn = $db->connect();
 if (!$conn) {
@@ -33,13 +27,11 @@ if (!$conn) {
 }
 error_log("Database connected successfully");
 
-// Read the incoming POST request body.
 $rawInput = file_get_contents('php://input');
 $input = json_decode($rawInput, true);
 $query = $input['query'] ?? '';
 $variables = $input['variables'] ?? [];
 
-// Prepare the response structure.
 $response = ['data' => []];
 
 function enrichProduct($conn, $product) {
@@ -56,13 +48,13 @@ function enrichProduct($conn, $product) {
     $pricesRaw = $priceStmt->fetchAll(PDO::FETCH_ASSOC);
     $prices = [];
     foreach ($pricesRaw as $p) {
-         $prices[] = [
-             'amount' => (float)$p['amount'],
-             'currency' => [
-                 'label' => $p['currency_label'],
-                 'symbol' => $p['currency_symbol']
-             ]
-         ];
+        $prices[] = [
+            'amount' => (float)$p['amount'],
+            'currency' => [
+                'label' => $p['currency_label'],
+                'symbol' => $p['currency_symbol']
+            ]
+        ];
     }
     $product['prices'] = $prices;
     
@@ -76,23 +68,23 @@ function enrichProduct($conn, $product) {
     $attributeSets = $attrStmt->fetchAll(PDO::FETCH_ASSOC);
     $attributes = [];
     foreach ($attributeSets as $aset) {
-         $itemStmt = $conn->prepare("SELECT id, display_value, value FROM attribute_items WHERE set_id = :set_id");
-         $itemStmt->execute([':set_id' => $aset['set_id']]);
-         $items = $itemStmt->fetchAll(PDO::FETCH_ASSOC);
-         $reformattedItems = [];
-         foreach ($items as $item) {
-             $reformattedItems[] = [
+        $itemStmt = $conn->prepare("SELECT id, display_value, value FROM attribute_items WHERE set_id = :set_id");
+        $itemStmt->execute([':set_id' => $aset['set_id']]);
+        $items = $itemStmt->fetchAll(PDO::FETCH_ASSOC);
+        $reformattedItems = [];
+        foreach ($items as $item) {
+            $reformattedItems[] = [
                 'id' => $item['id'],
                 'displayValue' => $item['display_value'],
                 'value' => $item['value']
-             ];
-         }
-         $attributes[] = [
-             'id' => $aset['set_id'],
-             'name' => $aset['name'],
-             'type' => $aset['type'],
-             'items' => $reformattedItems
-         ];
+            ];
+        }
+        $attributes[] = [
+            'id' => $aset['set_id'],
+            'name' => $aset['name'],
+            'type' => $aset['type'],
+            'items' => $reformattedItems
+        ];
     }
     $product['attributes'] = $attributes;
     return $product;
@@ -120,7 +112,7 @@ if (strpos($query, 'categories') !== false) {
     
     $enriched = [];
     foreach ($products as $prod) {
-         $enriched[] = enrichProduct($conn, $prod);
+        $enriched[] = enrichProduct($conn, $prod);
     }
     $response['data']['products'] = $enriched;
 } elseif (strpos($query, 'product(id:') !== false) {
@@ -130,15 +122,19 @@ if (strpos($query, 'categories') !== false) {
     } elseif (strpos($query, 'product(id: $id') !== false && isset($variables['id'])) {
         $productId = $variables['id'];
     }
+    error_log("Fetching product with ID: " . ($productId ?? 'null'));
     if ($productId) {
         $stmt = $conn->prepare("SELECT * FROM products WHERE id = :id");
         $stmt->execute([':id' => $productId]);
         $product = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($product) {
-             $product = enrichProduct($conn, $prod);
+            $response['data']['product'] = enrichProduct($conn, $product); // Fixed $prod to $product
+        } else {
+            error_log("Product not found for ID: $productId");
+            $response['data']['product'] = null;
         }
-        $response['data']['product'] = $product;
     } else {
+        error_log("No product ID provided");
         $response['data']['product'] = null;
     }
 } elseif (strpos($query, 'placeOrder') !== false) {
