@@ -9,7 +9,7 @@ ini_set('display_errors', 1);
 error_log("PHP application running on port 9000");
 
 // Set CORS headers so that the frontend can access this API.
-header('Access-Control-Allow-Origin: scandi-test-sepia.vercel.app'); // Replace with Vercel URL later
+header('Access-Control-Allow-Origin: https://scandi-test-sepia.vercel.app'); // Replace with Vercel URL later
 header('Access-Control-Allow-Headers: Content-Type');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
 
