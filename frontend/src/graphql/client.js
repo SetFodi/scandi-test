@@ -3,7 +3,7 @@ import { ApolloClient, InMemoryCache, HttpLink } from '@apollo/client';
 
 const client = new ApolloClient({
   link: new HttpLink({
-    uri: 'scandi-test-production.up.railway.app' // Root URL, no /graphql
+    uri: 'https://scandi-test-production.up.railway.app' // Absolute URL, no port
   }),
   cache: new InMemoryCache()
 });
