@@ -1,4 +1,3 @@
-// frontend/src/components/CartOverlay.jsx
 import React, { useContext } from 'react';
 import { useMutation } from '@apollo/client';
 import styled from 'styled-components';
@@ -26,7 +25,7 @@ const CartTitle = styled.h3`
 const CartItemContainer = styled.div`
   display: flex;
   padding: 1rem 0;
-  border-bottom: 1px solid #E5E5E5;
+  border-bottom: 1px solid #e5e5e5;
 `;
 
 const ItemDetails = styled.div`
@@ -60,17 +59,17 @@ const AttributeOptions = styled.div`
 
 const AttributeOption = styled.div`
   padding: 0.25rem 0.5rem;
-  border: 1px solid #1D1F22;
+  border: 1px solid #1d1f22;
   font-size: 0.75rem;
-  background: ${props => props.selected ? '#1D1F22' : 'transparent'};
-  color: ${props => props.selected ? 'white' : '#1D1F22'};
+  background: ${props => (props.selected ? '#1d1f22' : 'transparent')};
+  color: ${props => (props.selected ? 'white' : '#1d1f22')};
 `;
 
 const ColorOption = styled.div`
   width: 20px;
   height: 20px;
   background-color: ${props => props.color};
-  border: ${props => props.selected ? '2px solid #5ECE7B' : '1px solid #1D1F22'};
+  border: ${props => (props.selected ? '2px solid #5ece7b' : '1px solid #1d1f22')};
 `;
 
 const ItemControls = styled.div`
@@ -85,7 +84,7 @@ const QuantityControl = styled.button`
   width: 24px;
   height: 24px;
   background: transparent;
-  border: 1px solid #1D1F22;
+  border: 1px solid #1d1f22;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -118,7 +117,7 @@ const CartActions = styled.div`
 `;
 
 const OrderButton = styled.button`
-  background: #5ECE7B;
+  background: #5ece7b;
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
@@ -140,11 +139,10 @@ function CartOverlay({ onClose }) {
       const orderProducts = cart.map(item => ({
         productId: item.product.id,
         quantity: item.quantity,
-        selectedAttributes: item.selectedAttributes
+        selectedAttributes: item.selectedAttributes,
       }));
-      
+
       await placeOrder({ variables: { products: orderProducts } });
-      
       alert('Order placed successfully!');
       clearCart();
       onClose();
@@ -155,23 +153,22 @@ function CartOverlay({ onClose }) {
   };
 
   return (
-    <CartOverlayContainer>
+    <CartOverlayContainer data-testid="cart-overlay">
       <CartTitle>
         <b>My Bag,</b> {cart.length === 1 ? '1 item' : `${cart.reduce((sum, item) => sum + item.quantity, 0)} items`}
       </CartTitle>
-      
+
       {cart.length === 0 && <p>Your cart is empty</p>}
-      
+
       {cart.map((item, index) => (
         <CartItemContainer key={`${item.product.id}-${index}`}>
           <ItemDetails>
             <ItemName>{item.product.brand} {item.product.name}</ItemName>
             <ItemPrice>{item.product.prices[0].currency.symbol}{item.product.prices[0].amount.toFixed(2)}</ItemPrice>
-            
             {item.product.attributes.map(attribute => (
-              <AttributeContainer 
+              <AttributeContainer
                 key={attribute.id}
-                data-testid={`cart-item-attribute-${attribute.id.toLowerCase().replace(/\s+/g, '-')}`}
+                data-testid={`cart-item-attribute-${attribute.name.toLowerCase().replace(/\s+/g, '-')}`}
               >
                 <AttributeTitle>{attribute.name}:</AttributeTitle>
                 <AttributeOptions>
@@ -179,12 +176,10 @@ function CartOverlay({ onClose }) {
                     const isSelected = item.selectedAttributes.some(
                       attr => attr.id === attribute.id && attr.value === option.value
                     );
-                    
-                    const testIdBase = `cart-item-attribute-${attribute.id.toLowerCase().replace(/\s+/g, '-')}-${option.id.toLowerCase().replace(/\s+/g, '-')}`;
-                    
+                    const testIdBase = `cart-item-attribute-${attribute.name.toLowerCase().replace(/\s+/g, '-')}-${option.value.toLowerCase().replace(/\s+/g, '-')}`;
                     if (attribute.type === 'swatch') {
                       return (
-                        <ColorOption 
+                        <ColorOption
                           key={option.id}
                           color={option.value}
                           selected={isSelected}
@@ -192,10 +187,9 @@ function CartOverlay({ onClose }) {
                         />
                       );
                     }
-                    
                     return (
-                      <AttributeOption 
-                        key={option.id} 
+                      <AttributeOption
+                        key={option.id}
                         selected={isSelected}
                         data-testid={isSelected ? `${testIdBase}-selected` : testIdBase}
                       >
@@ -207,40 +201,32 @@ function CartOverlay({ onClose }) {
               </AttributeContainer>
             ))}
           </ItemDetails>
-          
           <ItemControls>
-            <QuantityControl 
+            <QuantityControl
               onClick={() => updateQuantity(index, item.quantity + 1)}
               data-testid="cart-item-amount-increase"
             >
               +
             </QuantityControl>
             <Quantity data-testid="cart-item-amount">{item.quantity}</Quantity>
-            <QuantityControl 
+            <QuantityControl
               onClick={() => updateQuantity(index, item.quantity - 1)}
               data-testid="cart-item-amount-decrease"
             >
               -
             </QuantityControl>
           </ItemControls>
-          
-          <ItemImage 
-            src={item.product.gallery[0]} 
-            alt={item.product.name} 
-          />
+          <ItemImage src={item.product.gallery[0]} alt={item.product.name} />
         </CartItemContainer>
       ))}
-      
+
       <CartTotal data-testid="cart-total">
         <span>Total</span>
         <span>${cartTotal.toFixed(2)}</span>
       </CartTotal>
-      
+
       <CartActions>
-        <OrderButton 
-          onClick={handleOrderSubmit}
-          disabled={cart.length === 0 || loading}
-        >
+        <OrderButton onClick={handleOrderSubmit} disabled={cart.length === 0 || loading}>
           {loading ? 'Processing...' : 'Order'}
         </OrderButton>
       </CartActions>

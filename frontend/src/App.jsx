@@ -1,7 +1,6 @@
-// frontend/src/App.jsx
 import React from 'react';
 import { ApolloProvider } from '@apollo/client';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import client from './graphql/client';
 import { CartProvider } from './context/CartContext';
 import Header from './components/Header';
@@ -15,11 +14,13 @@ function App() {
       <CartProvider>
         <Router>
           <Header />
-          <main>
+          <main style={{ paddingTop: '80px' }}>
             <Routes>
-              <Route path="/" element={<CategoryPage categoryName="all" />} />
-              <Route path="/category/:categoryName" element={<CategoryPage />} />
+              <Route path="/all" element={<CategoryPage categoryName="all" />} />
+              <Route path="/clothes" element={<CategoryPage categoryName="clothes" />} />
+              <Route path="/tech" element={<CategoryPage categoryName="tech" />} />
               <Route path="/product/:productId" element={<ProductPage />} />
+              <Route path="/" element={<Navigate to="/all" />} />
             </Routes>
           </main>
         </Router>

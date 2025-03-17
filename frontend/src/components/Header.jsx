@@ -1,4 +1,3 @@
-// frontend/src/components/Header.jsx
 import React, { useState, useContext } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
@@ -13,6 +12,11 @@ const HeaderContainer = styled.header`
   align-items: center;
   padding: 1rem 2rem;
   border-bottom: 1px solid #e5e5e5;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: white;
+  z-index: 10;
 `;
 
 const NavContainer = styled.nav`
@@ -22,14 +26,13 @@ const NavContainer = styled.nav`
 
 const NavLink = styled(Link)`
   text-decoration: none;
-  color: #1D1F22;
+  color: #1d1f22;
   padding: 0.5rem 1rem;
   text-transform: uppercase;
-  font-weight: ${props => props.active ? 'bold' : 'normal'};
-  border-bottom: ${props => props.active ? '2px solid #5ECE7B' : 'none'};
-  
+  font-weight: ${props => (props.active ? 'bold' : 'normal')};
+  border-bottom: ${props => (props.active ? '2px solid #5ece7b' : 'none')};
   &:hover {
-    color: #5ECE7B;
+    color: #5ece7b;
   }
 `;
 
@@ -44,7 +47,7 @@ const CartCount = styled.span`
   position: absolute;
   top: -8px;
   right: -8px;
-  background-color: #1D1F22;
+  background-color: #1d1f22;
   color: white;
   border-radius: 50%;
   width: 20px;
@@ -63,13 +66,13 @@ const Overlay = styled.div`
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 1;
-  display: ${props => props.visible ? 'block' : 'none'};
+  display: ${props => (props.visible ? 'block' : 'none')};
 `;
 
 const Logo = styled.div`
   font-size: 1.5rem;
   font-weight: bold;
-  color: #5ECE7B;
+  color: #5ece7b;
 `;
 
 function Header() {
@@ -77,34 +80,29 @@ function Header() {
   const { totalItems } = useContext(CartContext);
   const location = useLocation();
   const currentPath = location.pathname;
-  
+
   const { loading, error, data } = useQuery(GET_CATEGORIES);
-  
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error loading categories</p>;
-  
+
   const categories = data?.categories || [];
-  
-  const toggleCart = () => {
-    setCartOpen(!cartOpen);
-  };
-  
+  const categoryPaths = categories.map(cat => `/${cat.name}`);
+
+  const toggleCart = () => setCartOpen(!cartOpen);
+
   return (
     <>
       <HeaderContainer>
         <NavContainer>
           {categories.map(category => (
-            <NavLink 
+            <NavLink
               key={category.name}
-              to={category.name === 'all' ? '/' : `/category/${category.name}`}
-              active={
-                (currentPath === '/' && category.name === 'all') || 
-                currentPath === `/category/${category.name}`
-              }
+              to={`/${category.name}`}
+              active={currentPath === `/${category.name}`}
               data-testid={
-                (currentPath === '/' && category.name === 'all') || 
-                currentPath === `/category/${category.name}` 
-                  ? 'active-category-link' 
+                currentPath === `/${category.name}`
+                  ? 'active-category-link'
                   : 'category-link'
               }
             >
@@ -112,18 +110,12 @@ function Header() {
             </NavLink>
           ))}
         </NavContainer>
-        
         <Logo>SCANDIWEB</Logo>
-        
-        <CartButton 
-          onClick={toggleCart} 
-          data-testid="cart-btn"
-        >
+        <CartButton onClick={toggleCart} data-testid="cart-btn">
           🛒
           {totalItems > 0 && <CartCount>{totalItems}</CartCount>}
         </CartButton>
       </HeaderContainer>
-      
       {cartOpen && <CartOverlay onClose={() => setCartOpen(false)} />}
       <Overlay visible={cartOpen} onClick={() => setCartOpen(false)} />
     </>
