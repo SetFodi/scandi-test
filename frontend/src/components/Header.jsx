@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useContext } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
 import styled from 'styled-components';
@@ -76,8 +76,8 @@ const Logo = styled.div`
 `;
 
 function Header() {
-  const [cartOpen, setCartOpen] = useState(false);
-  const { totalItems } = useContext(CartContext);
+  // Use cart context state instead of local state
+  const { totalItems, isCartOpen, setIsCartOpen } = useContext(CartContext);
   const location = useLocation();
   const currentPath = location.pathname;
 
@@ -89,7 +89,7 @@ function Header() {
   const categories = data?.categories || [];
   const categoryPaths = categories.map(cat => `/${cat.name}`);
 
-  const toggleCart = () => setCartOpen(!cartOpen);
+  const toggleCart = () => setIsCartOpen(!isCartOpen);
 
   return (
     <>
@@ -116,10 +116,11 @@ function Header() {
           {totalItems > 0 && <CartCount>{totalItems}</CartCount>}
         </CartButton>
       </HeaderContainer>
-      {cartOpen && <CartOverlay onClose={() => setCartOpen(false)} />}
-      <Overlay visible={cartOpen} onClick={() => setCartOpen(false)} />
+      {isCartOpen && <CartOverlay onClose={() => setIsCartOpen(false)} />}
+      <Overlay visible={isCartOpen} onClick={() => setIsCartOpen(false)} />
     </>
   );
 }
 
 export default Header;
+

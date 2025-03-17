@@ -9,6 +9,9 @@ export const CartProvider = ({ children }) => {
     const savedCart = localStorage.getItem('cart');
     return savedCart ? JSON.parse(savedCart) : [];
   });
+  
+  // Add state for cart visibility
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
   // Save cart to localStorage whenever it changes
   useEffect(() => {
@@ -41,6 +44,9 @@ export const CartProvider = ({ children }) => {
         return [...prevCart, { product, selectedAttributes, quantity: 1 }];
       }
     });
+    
+    // Automatically open cart overlay when adding to cart
+    setIsCartOpen(true);
   };
 
   // Remove product from cart
@@ -85,9 +91,12 @@ export const CartProvider = ({ children }) => {
       updateQuantity,
       clearCart,
       totalItems,
-      cartTotal
+      cartTotal,
+      isCartOpen,
+      setIsCartOpen
     }}>
       {children}
     </CartContext.Provider>
   );
 };
+
